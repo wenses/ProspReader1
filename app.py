@@ -74,10 +74,10 @@ def uploader():
 	if request.method=="POST":
 		f=request.files["file"]
 
-		os.chdir("files")
+		
 		f.save(f.filename)
 		replace(f.filename)
-		os.chdir("..")
+		
 		
 
 
