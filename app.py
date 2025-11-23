@@ -81,6 +81,6 @@ def uploader():
 		
 
 
-	return send_file(f'files/Translated - {f.filename}',as_attachment=True)
+	return send_file(f'Translated - {f.filename}',as_attachment=True)
 	
 app.run(host="0.0.0.0")
