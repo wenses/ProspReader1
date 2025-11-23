@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prospectus Reader</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .upload-container {
+            background: white;
+            padding: 40px 60px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 380px;
+        }
+        h1 { color: #333; margin-bottom: 30px; }
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 50px 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background-color: #f8f9ff;
+        }
+        .upload-area:hover { background-color: #eef0ff; border-color: #764ba2; }
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <h1>Wavivu wa kusoma Prospectus :)</h1>
+
+        <form id="uploadForm" method="POST" action="/uploader" enctype="multipart/form-data">
+            <div class="upload-area" id="uploadArea">
+                <p style="margin: 0 0 20px 0; color: #888; font-size: 18px;">
+                    Drag & drop your file here or click to select
+                </p>
+                <button type="button" class="upload-btn" id="selectBtn">Choose File</button>
+                <input type="file" name="file" id="fileInput" required>
+                <input type="submit" class="upload-btn" value="submit">
+            </div>
+            <div id="fileName" style="margin-top: 15px; color: #666;">No file chosen</div>
+            <div id="status"></div>
+        </form>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const status = document.getElementById('status');
+        const selectBtn = document.getElementById('selectBtn');
+
+        // Click anywhere in the area to open file picker
+        //uploadArea.addEventListener('click', () => fileInput.click());
+        selectBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+
+        // Show selected file name
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName.textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                fileName.style.color = "#4CAF50";
+            }
+        });
+
+        // Drag & drop visual feedback
+        ['dragover', 'dragenter'].forEach(event => {
+            uploadArea.addEventListener(event, (e) => {
+                e.preventDefault();
+                uploadArea.style.backgroundColor = '#e1e5ff';
+                uploadArea.style.borderColor = '#764ba2';
+            });
+        });
+
+        ['dragleave', 'dragend'].forEach(event => {
+            uploadArea.addEventListener(event, () => {
+                uploadArea.style.backgroundColor = '#f8f9ff';
+                uploadArea.style.borderColor = '#667eea';
+            });
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#f8f9ff';
+            uploadArea.style.borderColor = '#667eea';
+
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                if (fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    fileName.textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                    fileName.style.color = "#4CAF50";
+                }
+                // Auto submit on drop
+                document.getElementById('uploadForm').submit();
+            }
+        });
+
+        // Handle form submission with nice feedback
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            if (!fileInput.files.length) {
+                //e.preventDefault();
+                status.innerHTML = '<span class="error">Please select a file first!</span>';
+                return;
+            }
+            status.innerHTML = '<span style="color:#667eea;">Uploading...</span>';
+        });
+    </script>
+</body>
+</html>
