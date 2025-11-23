@@ -8,11 +8,13 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 0;
+            padding: 40px 20px;
         }
         .upload-container {
             background: white;
@@ -21,6 +23,7 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             text-align: center;
             min-width: 380px;
+            margin-bottom: 40px;
         }
         h1 { color: #333; margin-bottom: 30px; }
         .upload-area {
@@ -55,12 +58,35 @@
         .success { color: #4CAF50; }
         .error { color: #f44336; }
         input[type="file"] { display: none; }
+
+        /* Footer Styles */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            padding: 20px;
+        }
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        .footer-line {
+            width: 100px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.4);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
     <div class="upload-container">
         <h1>Wavivu wa kusoma Prospectus :)</h1>
-
         <form id="uploadForm" method="POST" action="/uploader" enctype="multipart/form-data">
             <div class="upload-area" id="uploadArea">
                 <p style="margin: 0 0 20px 0; color: #888; font-size: 18px;">
@@ -75,18 +101,28 @@
         </form>
     </div>
 
+    <!-- Footer with Copyright -->
+    <footer>
+        <div class="footer-line"></div>
+        <p>&copy; <span id="year"></span> <b>Made by CyberMaster43</b>.</p>
+        <p>Email:<span style="color: #e91e63;"></span> <a href="mailto:cybermaster4307@gmail.com">cybermaster4307@gmail.com</a></p>
+    </footer>
+
     <script>
+        // Auto update copyright year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const fileName = document.getElementById('fileName');
         const status = document.getElementById('status');
         const selectBtn = document.getElementById('selectBtn');
 
-        // Click anywhere in the area to open file picker
-        //uploadArea.addEventListener('click', () => fileInput.click());
-        selectBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+        selectBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            fileInput.click(); 
+        });
 
-        // Show selected file name
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
@@ -95,7 +131,6 @@
             }
         });
 
-        // Drag & drop visual feedback
         ['dragover', 'dragenter'].forEach(event => {
             uploadArea.addEventListener(event, (e) => {
                 e.preventDefault();
@@ -115,7 +150,6 @@
             e.preventDefault();
             uploadArea.style.backgroundColor = '#f8f9ff';
             uploadArea.style.borderColor = '#667eea';
-
             if (e.dataTransfer.files.length) {
                 fileInput.files = e.dataTransfer.files;
                 if (fileInput.files[0]) {
@@ -123,19 +157,16 @@
                     fileName.textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
                     fileName.style.color = "#4CAF50";
                 }
-                // Auto submit on drop
                 document.getElementById('uploadForm').submit();
             }
         });
 
-        // Handle form submission with nice feedback
         document.getElementById('uploadForm').addEventListener('submit', function(e) {
             if (!fileInput.files.length) {
-                //e.preventDefault();
                 status.innerHTML = '<span class="error">Please select a file first!</span>';
-                return;
+            } else {
+                status.innerHTML = '<span style="color:#667eea;">Uploading...</span>';
             }
-            status.innerHTML = '<span style="color:#667eea;">Uploading...</span>';
         });
     </script>
 </body>
