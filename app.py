@@ -78,9 +78,13 @@ def uploader():
 		f.save(f.filename)
 		replace(f.filename)
 		
-		
-
+	
 
 	return send_file(f'Translated - {f.filename}',as_attachment=True)
+
+@app.route("/gotoportfolio",methods=['GET','POST'])
+def portfolio():
+
+    return redirect("https://cybermaster43.vercel.app")
 	
-app.run(host="0.0.0.0")
+app.run(host="0.0.0.0",port=1234)
